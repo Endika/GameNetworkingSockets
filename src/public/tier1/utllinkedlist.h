@@ -402,13 +402,7 @@ I CUtlLinkedList<T,I>::AllocInternal( bool multilist )
 
 		if ( elem == InvalidIndex() )
 		{
-#ifdef _WIN32
-			Error("%s overflow!\n", typeid(*this).raw_name());
-#else
-#if ( !defined(_PS3) || defined(_DEBUG) )
-			Error("%s overflow!\n", typeid(*this).name());
-#endif
-#endif
+			Error("CUtlLinkedList overflow!\n");
 		}
 	} 
 	else

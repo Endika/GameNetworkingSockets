@@ -10,17 +10,9 @@
 #pragma once
 #endif
 
+#include "steamnetworkingsockets_config.h"
 #include "steam/steamtypes.h"
 #include "steam/steamclientpublic.h"
-#include "tier0/platform.h"
-
-#if defined( STEAMDATAGRAMLIB_STATIC_LINK )
-	#define STEAMDATAGRAMLIB_INTERFACE extern
-#elif defined( STEAMDATAGRAMLIB_FOREXPORT )
-	#define STEAMDATAGRAMLIB_INTERFACE DLL_EXPORT
-#else
-	#define STEAMDATAGRAMLIB_INTERFACE DLL_IMPORT
-#endif
 
 #pragma pack( push, 8 )
 
@@ -225,7 +217,7 @@ inline SteamNetworkingPOPID CalculateSteamNetworkingPOPIDFromString( const char 
 template <int N>
 inline void GetSteamNetworkingLocationPOPStringFromID( SteamNetworkingPOPID id, char (&szCode)[N] )
 {
-	COMPILE_TIME_ASSERT( N >= 5 );
+	static_assert( N >= 5, "Fixed-size buffer not big enough to hold SDR POP ID" );
 	szCode[0] = ( id >> 16U );
 	szCode[1] = ( id >> 8U );
 	szCode[2] = ( id );
@@ -295,7 +287,7 @@ protected:
 	int64 m_nConnUserData;
 	SteamNetworkingMicroseconds m_usecTimeReceived;
 
-	inline ~ISteamNetworkingMessage() {}; // Destructor hidden - use Release()!  But make it inline and empty, in case you want to derive your own type that satisfies this interface for use in your code.
+	inline ~ISteamNetworkingMessage() {} // Destructor hidden - use Release()!  But make it inline and empty, in case you want to derive your own type that satisfies this interface for use in your code.
 };
 
 /// Object that describes a "location" on the Internet with sufficient

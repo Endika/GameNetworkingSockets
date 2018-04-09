@@ -4,10 +4,10 @@
 #define CSTEAMNETWORKINGSOCKETS_H
 #pragma once
 
+#include <steamnetworkingsockets/isteamnetworkingsockets.h>
 #ifndef STEAMNETWORKINGSOCKETS_OPENSOURCE
 #include <steam/isteamnetworkingsocketsserialized.h>
 #endif
-#include <steamnetworkingsockets/isteamnetworkingsockets.h>
 #include "steamnetworkingsockets_connections.h"
 
 class CMsgSteamDatagramP2PRendezvous;
@@ -166,16 +166,16 @@ public:
 
 	// Implements ISteamNetworkingSockets
 	virtual HSteamListenSocket CreateListenSocket( int nSteamConnectVirtualPort, uint32 nIP, uint16 nPort ) OVERRIDE;
-	virtual HSteamNetConnection ConnectByIPv4Address( uint32 nIP, uint16 nPort );
+	virtual HSteamNetConnection ConnectByIPv4Address( uint32 nIP, uint16 nPort ) OVERRIDE;
 	virtual EResult AcceptConnection( HSteamNetConnection hConn ) OVERRIDE;
 	virtual bool CloseConnection( HSteamNetConnection hConn, int nReason, const char *pszDebug, bool bEnableLinger ) OVERRIDE;
 	virtual bool CloseListenSocket( HSteamListenSocket hSocket, const char *pszNotifyRemoteReason ) OVERRIDE;
 	virtual bool SetConnectionUserData( HSteamNetConnection hPeer, int64 nUserData ) OVERRIDE;
 	virtual int64 GetConnectionUserData( HSteamNetConnection hPeer ) OVERRIDE;
 	virtual void SetConnectionName( HSteamNetConnection hPeer, const char *pszName ) OVERRIDE;
-	virtual void GetConnectionName( HSteamNetConnection hPeer, char *pszName, int nMaxLen ) OVERRIDE;
+	virtual bool GetConnectionName( HSteamNetConnection hPeer, char *pszName, int nMaxLen ) OVERRIDE;
 	virtual EResult SendMessageToConnection( HSteamNetConnection hConn, const void *pData, uint32 cbData, ESteamNetworkingSendType eSendType ) OVERRIDE;
-	virtual EResult FlushMessagesOnConnection( HSteamNetConnection hConn );
+	virtual EResult FlushMessagesOnConnection( HSteamNetConnection hConn ) OVERRIDE;
 	virtual int ReceiveMessagesOnConnection( HSteamNetConnection hConn, ISteamNetworkingMessage **ppOutMessages, int nMaxMessages ) OVERRIDE;
 	virtual int ReceiveMessagesOnListenSocket( HSteamListenSocket hSocket, ISteamNetworkingMessage **ppOutMessages, int nMaxMessages ) OVERRIDE;
 	virtual bool GetConnectionInfo( HSteamNetConnection hConn, SteamNetConnectionInfo_t *pInfo ) OVERRIDE;

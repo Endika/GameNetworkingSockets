@@ -12,8 +12,6 @@
 #include "../steamnetworking_statsutils.h"
 #include <tier1/utllinkedlist.h>
 #include <tier1/netadr.h>
-#include <tier1/utlhashmap.h>
-#include <tier1/utlstring.h>
 #include "steamnetworkingsockets_lowlevel.h"
 #include "keypair.h"
 #include <tier0/memdbgoff.h>
@@ -240,7 +238,7 @@ public:
 	void SetUserData( int64 nUserData );
 
 	// Get/set name
-	inline void GetName( char *pszName, int nMaxLen ) const { V_strncpy( pszName, m_sName.String(), nMaxLen); }
+	inline const char *GetName() const { return m_sName.c_str(); }
 	void SetName( const char *pszName ) { m_sName = pszName; }
 
 	/// High level state of the connection
@@ -278,10 +276,10 @@ public:
 
 //
 // Connection state machine
+// Functions to transition to the specified state.
 //
 
-	// enter the specified state
-	void ConnectionState_ProblemDetectedLocally( ESteamNetConnectionEnd eReason, const char *pszFmt, ... );
+	void ConnectionState_ProblemDetectedLocally( ESteamNetConnectionEnd eReason, PRINTF_FORMAT_STRING const char *pszFmt, ... ) FMTFUNCTION( 3, 4 );
 	void ConnectionState_ClosedByPeer( int nReason, const char *pszDebug );
 	void ConnectionState_FindingRoute( SteamNetworkingMicroseconds usecNow );
 	void ConnectionState_Connected( SteamNetworkingMicroseconds usecNow );
@@ -331,7 +329,7 @@ public:
 	/// Called when we receive an (end-to-end) packet with a sequence number
 	void RecvNonDataSequencedPacket( uint16 nWireSeqNum, SteamNetworkingMicroseconds usecNow );
 
-	bool GetDebugText( char *pszOut, int nOutCCH );
+	void GetDebugText( char *pszOut, int nOutCCH );
 
 	// Called from SNP to update transmit/receive speeds
 	void UpdateSpeeds( int nTXSpeed, int nRXSpeed );
@@ -385,7 +383,7 @@ protected:
 	int64 m_nUserData;
 
 	/// Name (for debugging)
-	CUtlString m_sName;
+	std::string m_sName;
 
 	// Implements IThinker.
 	// Connections do not override this.  Do any periodic work in ThinkConnection()
@@ -505,7 +503,7 @@ protected:
 	void SNP_CheckForReliable( SteamNetworkingMicroseconds usecNow );
 	void SNP_UpdateX( SteamNetworkingMicroseconds usecNow );
 	bool SNP_InsertSegment( SSNPBuffer *p_buf, uint8 flags, int nSize );
-	CUtlString SNP_GetDebugText();
+	std::string SNP_GetDebugText();
 	void SNP_PopulateDetailedStats( SteamDatagramLinkStats &info ) const;
 	void SNP_PopulateQuickStats( SteamNetworkingQuickConnectionStatus &info, SteamNetworkingMicroseconds usecNow );
 	bool SNP_UpdateIMean( uint16 unSeqNum, SteamNetworkingMicroseconds usecNow );
